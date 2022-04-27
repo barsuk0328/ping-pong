@@ -8,7 +8,7 @@ window.fill(back)
 game = True
 finish = False 
 clock = time.Clock()
-FPS = 165
+FPS = 60
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
         super().__init__()
@@ -23,9 +23,9 @@ class GameSprite(sprite.Sprite):
 class Player(GameSprite):
     def update_r(self):
         keys_pressed = key.get_pressed()
-        if keys_pressed[K_UP] and self.rect.x > 5:
+        if keys_pressed[K_UP] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys_pressed[K_DOWN] and self.rect.x < win_width - 99:
+        if keys_pressed[K_DOWN] and self.rect.y < win_height - 80:
             self.rect.y += self.speed
     def update_l(self):
         keys_pressed = key.get_pressed()
@@ -34,9 +34,24 @@ class Player(GameSprite):
         if keys_pressed[K_s] and self.rect.y < win_height - 80:
             self.rect.y += self.speed
 
-racket1 = Player('1.png', 20, 100, 60, 65, 3)
-racket2 = Player('2.png', 500, 100, 60, 65, 3)
-ball = GameSprite('pngwing.com.png', 280, 200, 40, 40, 4)
+racket1 = Player('1.png', 10, 100, 60, 65, 4)
+racket2 = Player('2.png', 520, 100, 60, 65, 4)
+ball = GameSprite('pngwing.com.png', 280, 200, 25, 25, 4)
+dx = 4
+dy = 4
+
+font.init()
+font = font.Font(None, 35)
+lose1 = font.render('PLAYER 1 LOSE', True, (180, 0, 0))
+lose2 = font.render('PLAYER 2 LOSE', True, (180, 0, 0))
+
+score_left = 0
+score_right = 0
+
+
+
+
+
 
 
 
@@ -50,6 +65,16 @@ while game:
         racket2.update_r()
         racket1.reset()
         racket2.reset()
+        ball.rect.x += dx
+        ball.rect.y += dy
+        ball.reset()
+        if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+            dx *= -1.
+        if ball.rect.y < 0 or ball.rect.y > win_height-40:
+            dy *= -1.
+        
+        score_l = font.render(str(score_left), True, (0, 0, 0))
+        score_r = font.render(str(score_right), True, (0, 0, 0))
+        window.blit(score_l, (10, 10))
+        window.blit(score_r, (win_width-25, 10))
 
-    display.update()
-    clock.tick(FPS)
